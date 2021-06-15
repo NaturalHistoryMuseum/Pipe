@@ -28,8 +28,8 @@ class IdentifyCrossRef:
 
         for message in self.messages:
             print(f"CrossRef check for {message.title}...")
-            query = message.title if message.m_pub_title is None else f"{message.title} {message.m_pub_title}"
-            pub_date = '1990-01-01' if message.m_pub_year is None else f"{message.m_pub_year}-01-01"
+            query = message.title if message.pub_title is None else f"{message.title} {message.pub_title}"
+            pub_date = '1990-01-01' if message.pub_year is None else f"{message.pub_year}-01-01"
 
             try:
                 crossref_result = cr.works(
@@ -62,16 +62,9 @@ class IdentifyCrossRef:
 
                     # If already identified, update the message with doi, identification and run date
                     elif cr_doi in identified_citations:
-                        message.doi = cr_doi
-                        message.id_status = True
-                        message.last_identify_run = harvest_date
                         continue
                     else:
                         identified_citations.add(cr_doi)
-                        message.doi = cr_doi
-                        message.id_status = True
-                        message.last_identify_run = harvest_date
-
                         citation_results.append(Citation(author=self.concatenate_authors(best_match.get('author')),
                                                 doi=best_match.get('DOI'),
                                                 title=best_match['title'][0],
@@ -88,11 +81,10 @@ class IdentifyCrossRef:
                                                 volume=best_match.get('volume'),
                                                 page=best_match.get('page'),
                                                 classification_id=None,
-                                                identified_date=harvest_date))
+                                                         ecid=message.id))
 
                 else:
-                    # Update crossref date and skip if no good match found
-                    message.last_identify_run = harvest_date
+                    pass
 
             except HTTPError as error:
                 logging.warning(f"HTTPError! {error}: {query}")

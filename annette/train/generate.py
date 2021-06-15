@@ -1,23 +1,9 @@
 import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.metrics import classification_report, confusion_matrix
-from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import BernoulliNB
 from sklearn.neural_network import MLPClassifier
 from sklearn.tree import DecisionTreeClassifier
-
-
-def train_test(data, labels):
-    X_train, X_test, y_train, y_test = train_test_split(data, labels,
-                                                        test_size=0.2,
-                                                        random_state=123, stratify=labels)
-    return {
-               'x': X_train,
-               'y': y_train
-               }, {
-               'x': X_test,
-               'y': y_test
-               }
 
 
 def report(test, model):

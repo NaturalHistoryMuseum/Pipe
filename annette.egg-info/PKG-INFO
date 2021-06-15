@@ -1,0 +1,16 @@
+Metadata-Version: 1.2
+Name: annette
+Version: 0.1
+Summary: UNKNOWN
+Home-page: https://github.com/NaturalHistoryMuseum/annette
+Author: Sarah Vincent, Ginger Butcher
+Author-email: data@nhm.ac.uk
+License: GPLv3+
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Requires-Python: >=3.7.0
