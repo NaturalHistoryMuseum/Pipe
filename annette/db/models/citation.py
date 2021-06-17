@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Date, ForeignKey, String, Boolean
+from sqlalchemy import Column, Date, ForeignKey, String, Integer
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects import mysql
 
@@ -25,6 +25,6 @@ class Citation(Base):
     issue = Column(mysql.MEDIUMTEXT)
     volume = Column(mysql.MEDIUMTEXT)
     page = Column(mysql.MEDIUMTEXT)
+    classification_id = Column(Integer)
     ecid = Column(ForeignKey(ExtractedCitation.id))
     raw = relationship('ExtractedCitation', backref='citation')
-    relevant = Column(Boolean)

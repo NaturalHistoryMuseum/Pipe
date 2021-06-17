@@ -1,17 +1,12 @@
 import itertools
 import re
 import unicodedata
-
+import emoji
 import nltk
-import logging
 
+from annette.utils.log import get_logger
 
-logger = logging.getLogger('annette.harvest')
-logger.setLevel(logging.DEBUG)
-handler = logging.StreamHandler()
-formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
+logger = get_logger('annette.harvest')
 
 nltk.download('punkt')
 
@@ -22,7 +17,7 @@ def clean_string(string):
     :param string: String to be cleaned
     :return: Clean string
     """
-    return unicodedata.normalize("NFKD", string).replace("...", "").strip()
+    return emoji.demojize(unicodedata.normalize("NFKD", string).replace("...", "").strip())
 
 
 def minimum_word_distance(string):

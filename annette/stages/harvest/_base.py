@@ -1,5 +1,5 @@
 from abc import abstractmethod
-
+from pymysql.err import InternalError
 
 class BaseHarvester(object):
     """
@@ -31,4 +31,9 @@ class BaseHarvester(object):
         :return:
         """
         self.session_manager.session.add_all(extracted_citations)
-        self.session_manager.session.flush()
+        try:
+            self.session_manager.session.flush()
+        except InternalError as e:
+            extracted_citations = [c for c in extracted_citations if c.email_id != e.params['email_id']]
+            self.store_citations(extracted_citations)
+

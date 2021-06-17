@@ -92,6 +92,32 @@ class GmailHarvester(BaseHarvester):
         except errors.HttpError as error:
             _utils.logger.error(f'An error occurred during unread email retrieval: ${error}')
 
+    def util_unread(self):
+        """
+        A utility function for marking all Google Scholar emails as unread. For testing/dev.
+        """
+        try:
+            query = 'from:scholaralerts-noreply@google.com'
+            page_token = None
+            p_emails = []
+            while True:
+                request = self.service.users().messages().list(userId='me',
+                                                               q=query, pageToken=page_token)
+                response = request.execute()
+                if 'messages' not in response:
+                    break
+                p_emails.extend(response['messages'])
+                if 'nextPageToken' not in response:
+                    break
+                page_token = response['nextPageToken']
+            self.service.users().messages().batchModify(userId='me', body={
+                'addLabelIds': ['UNREAD'],
+                'ids': [e['id'] for e in p_emails]
+                }).execute()
+
+        except errors.HttpError as error:
+            _utils.logger.error(f'An error occurred: ${error}')
+
 
 class GmailParser(object):
     def __init__(self, service):
@@ -110,9 +136,13 @@ class GmailParser(object):
             parsed_bib_data = cls._parse_email_bib_data(_utils.clean_string(bib_data.text))
 
             # Get snippet + features from highlights
-            snippet = soup.find(class_='gse_alrt_sni')
-            snippet_distance = _utils.minimum_word_distance(snippet.text)
-            snippet_clean = _utils.clean_string(" ".join(snippet.stripped_strings))
+            snippet = i.find_next(class_='gse_alrt_sni')
+            if snippet is None:
+                snippet_distance = None
+                snippet_clean = ''
+            else:
+                snippet_distance = _utils.minimum_word_distance(snippet.text)
+                snippet_clean = _utils.clean_string(" ".join(snippet.stripped_strings))
             snippet_match = snippet_distance is not None
 
             # Get title
@@ -123,9 +153,9 @@ class GmailParser(object):
             extracted_citations.append(ExtractedCitation(email_id=email['id'],
                                                          title=title,
                                                          snippet=snippet_clean,
-                                                         author=parsed_bib_data['m_author'],
-                                                         pub_title=parsed_bib_data['m_pub_title'],
-                                                         pub_year=parsed_bib_data['m_pub_year'],
+                                                         author=parsed_bib_data['author'],
+                                                         pub_title=parsed_bib_data['pub_title'],
+                                                         pub_year=parsed_bib_data['pub_year'],
                                                          sent_date=email['received_date'],
                                                          source='GS',
                                                          id_status=False,
@@ -143,8 +173,8 @@ class GmailParser(object):
         :param bib_data: String
         :return: Dict containing author name, publication title and year
         """
-        m_pub_title = None
-        m_pub_year = None
+        pub_title = None
+        pub_year = None
 
         # Get author name(s)
         parsed_bib = bib_data.split(" - ")
@@ -155,20 +185,23 @@ class GmailParser(object):
             parsed_b2 = parsed_bib[1].split(',')
 
             if len(parsed_b2) == 2:
-                m_pub_title = _utils.clean_string(parsed_b2[0])
-                m_pub_year = int(_utils.clean_string(parsed_b2[1]))
+                pub_title = _utils.clean_string(parsed_b2[0])
+                try:
+                    pub_year = int(_utils.clean_string(parsed_b2[1]))
+                except ValueError:
+                    pub_year = None
 
             else:
                 try:
-                    m_pub_year = int(_utils.clean_string(parsed_b2[0]))
+                    pub_year = int(_utils.clean_string(parsed_b2[0]))
                 except ValueError:
-                    m_pub_year = None
-                    m_pub_title = _utils.clean_string(parsed_b2[0])
+                    pub_year = None
+                    pub_title = _utils.clean_string(parsed_b2[0])
 
         return {
-            'm_author': m_author,
-            'm_pub_title': m_pub_title,
-            'm_pub_year': m_pub_year
+            'author': m_author,
+            'pub_title': pub_title,
+            'pub_year': pub_year
             }
 
     def get_email(self, email_id):

@@ -2,7 +2,12 @@
 from annette.stages.harvest import HarvestCore
 from annette.stages.identify import IdentifyCore
 from annette.stages.enhance import EnhanceCore
+from annette.stages.classify import ClassifyCore
 from annette.db import SessionManager
+from datetime import datetime as dt, timedelta
+from annette.db.models import ExtractedCitation, Citation
+from sqlalchemy import or_
+from .identify_crossref import IdentifyCrossRef
 
 with SessionManager() as session_manager:
     # HARVEST STAGE
@@ -11,84 +16,45 @@ with SessionManager() as session_manager:
     session_manager.complete('harvest')
 
     # IDENTIFY STAGE
-    citations = IdentifyCore.run()
-    IdentifyCore.store(session_manager, citations)
-    session_manager.complete('identify')
+    # citations = IdentifyCore.run()
+    # IdentifyCore.store(session_manager, citations)
+    # session_manager.complete('identify')
 
     # old code -------------------------------------------------------------------------------------
     # # Set cutoff to one month before current date
-    # cutoff = date.today() - timedelta(days=31)
+    # cutoff = dt.today() - timedelta(days=31)
     #
     # # Query extractedcitation_store for records which haven't been checked against crossref
     # # in the last month (or ever)
-    # mystery_extractedcitations = list(session.query(ExtractedCitation)
-    #                                   .filter(or_(ExtractedCitation.last_identify_run is None,
-    #                                               ExtractedCitation.last_identify_run < cutoff))
-    #                                   .filter(not ExtractedCitation.id_status).limit(50))
+    # mystery_extractedcitations = session_manager.session.query(ExtractedCitation).all()
     #
     # # Get bib data from crossref and update extractedcitations with confirmed DOI
     # identified_citations, id_extractedcitations = IdentifyCrossRef(
     #     mystery_extractedcitations).get_crossref_match()
     #
     # # Update extractedcitation table for both matched and unmatched extractedcitations
-    # session.add_all(id_extractedcitations)
+    # session_manager.session.add_all(id_extractedcitations)
     #
     # # Get all known citations
-    # known_citations = {x.doi for x in session.query(Citation)}
+    # known_citations = {x.doi for x in session_manager.session.query(Citation)}
     #
     # # Strip out citations already in the database
     # identified_citations = [d for d in identified_citations if d.doi not in known_citations]
     #
     # # Add new citations
-    # session.add_all(identified_citations)
-    # logging.info(f"{len(identified_citations)} citations written to citation_store.")
-    # session.flush()
+    # session_manager.session.add_all(identified_citations)
+    # session_manager.session.flush()
     # print("crossref identifications written to db")
     # ----------------------------------------------------------------------------------------------
 
     # ENHANCE STAGE
-    metadata = EnhanceCore.run(session_manager)
-    EnhanceCore.store(session_manager, metadata)
-    session_manager.complete('enhance')
-
-    # ----------------------------------------------------------------------------------------------
-    # # Harvest metrics monthly
-    # if date.today().day == 1:
-    #     logging.info("Running metrics...")
-    #     citation_dois = list(session.query(Citation).filter(Citation.classification_id == True))
-    #     session.flush()
-    #
-    #     new_metrics = Dimensions(citation_dois).get_citations()
-    #
-    #     # Write to bibliometrics table and log results
-    #     session.add_all(new_metrics)
-    #     logging.info(f"{len(new_metrics)} access metrics written to bibliometrics.")
-    #     session.flush()
-    #
-    # print("starting access queries")
-    # # Get access data for citations newly-identified in this pass
-    # new_access = Unpaywall(identified_citations).get_access_data()
-    # session.add_all(new_access)
-    # session.flush()
-    #
-    # # Every six months, re-check all Citation records for updated access info
-    # if date.today().day == 1 and (date.today().month == 12 or date.today().month == 6):
-    #
-    #     all_records = list(session.query(Citation)
-    #                        .filter(Citation.classification_id == True,
-    #                                Citation.identified_date != date.today()))
-    #
-    #     updated_access_records = Unpaywall(all_records).get_access_data()
-    #     session.add_all(updated_access_records)
-    #     session.flush()
-    #
-    # unclassified_citations = list(
-    #     session.query(Citation).filter(Citation.classification_id == None))
-    # print("finished access queries - starting classification")
-    # ----------------------------------------------------------------------------------------------
+    # metadata = EnhanceCore.run(session_manager)
+    # EnhanceCore.store(session_manager, metadata)
+    # session_manager.complete('enhance')
 
     # CLASSIFY STAGE
-
+    updated_citations = ClassifyCore.run(session_manager)
+    ClassifyCore.store(session_manager, updated_citations)
     session_manager.complete('classify')
 
     # ----------------------------------------------------------------------------------------------

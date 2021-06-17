@@ -22,6 +22,8 @@ if [ ! -f "/root/.epitator.sqlitedb" ]; then
 fi
 
 if [ -f "annette/data/gmail-credentials.json" ]; then
+  python setup.py develop
+  jupyter notebook --ip=0.0.0.0 --allow-root --no-browser &&
   python -m annette.src.runme
 else
   echo "Now run:\n\tdocker run -it annette_backend python /opt/app/deploy/auth.py --noauth_local_webserver"

@@ -16,7 +16,7 @@ class BaseEnhancer(object):
         Load the input data.
         :return:
         """
-        return self.session_manager.session.query(Citation).filter(Citation.relevant).all()
+        return self.session_manager.session.query(Citation).filter(Citation.classification_id is not None).all()
 
     @abstractmethod
     def get_metadata(self, citation):

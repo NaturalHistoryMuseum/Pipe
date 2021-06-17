@@ -32,7 +32,7 @@ def citation(**kwargs):
                 page='1175-1187',
                 ecid=1,
                 log_id=2,
-                relevant=True)
+                classification_id=1)
     data.update(kwargs)
     return Citation(**data)
 

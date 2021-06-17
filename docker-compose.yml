@@ -17,6 +17,8 @@ services:
       - test_db
     volumes:
       - .:/opt/app
+    ports:
+      - "8888:8888"
 
   db:
     image: mysql:latest
