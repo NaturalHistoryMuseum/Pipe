@@ -14,11 +14,14 @@ echo "MySQL started"
 
 cd /opt/app || exit
 
-if [ ! -f "/root/.epitator.sqlitedb" ]; then
+if [ -f "/opt/app/deploy/.cache/.epitator.sqlitedb" ]; then
+  cp /opt/app/deploy/.cache/.epitator.sqlitedb /root/
+elif [ ! -f "/root/.epitator.sqlitedb" ]; then
   # this doesn't work if you put it in the Dockerfile but
   # it takes ages so we only want to do it once
   echo "Importing epitator"
   python -m epitator.importers.import_all
+  cp /root/.epitator.sqlitedb /opt/app/deploy/.cache/.epitator.sqlitedb
 fi
 
 if [ -f "annette/data/gmail-credentials.json" ]; then
