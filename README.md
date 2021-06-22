@@ -24,7 +24,7 @@
 2. Get & store Gmail credentials:
 
     ```sh
-    docker run -it annette_backend python /opt/app/deploy/auth.py --noauth_local_webserver
+    docker run -it annette_backend python /opt/app/deploy/backend/scripts/auth.py --noauth_local_webserver
     ```
    
 ## Run

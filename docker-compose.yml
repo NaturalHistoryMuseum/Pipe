@@ -5,13 +5,9 @@ services:
   backend:
     build:
       context: .
-      dockerfile: deploy/backend.dockerfile
-    environment:
-      DATABASE_URL: annette:pass@db:3306/annette_db
-      DATABASE_HOST: db
-      TEST_DATABASE_URL: annette:pass@test_db:3306/annette_db
-      TEST_DATABASE_HOST: test_db
-      PYTHONUNBUFFERED: 1
+      dockerfile: deploy/backend/Dockerfile
+    env_file:
+      - deploy/backend/.env
     depends_on:
       - db
       - test_db

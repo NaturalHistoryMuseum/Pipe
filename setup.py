@@ -11,7 +11,7 @@ AUTHOR = 'Sarah Vincent, Ginger Butcher'
 REQUIRES_PYTHON = '>=3.7.0'
 VERSION = '0.1'
 
-with open('deploy/requirements.txt', 'r') as req_file:
+with open('deploy/backend/requirements.txt', 'r') as req_file:
     REQUIRED = [r.strip() for r in req_file.readlines()]
 
 setup(

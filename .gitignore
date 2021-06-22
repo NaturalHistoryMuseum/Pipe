@@ -20,4 +20,4 @@ gmail-credentials.json
 
 local/
 
-deploy/.cache/
+/deploy/backend/.cache/

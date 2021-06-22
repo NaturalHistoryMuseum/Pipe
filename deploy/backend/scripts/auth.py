@@ -3,9 +3,9 @@ from oauth2client.file import Storage
 import argparse
 
 scopes = 'https://www.googleapis.com/auth/gmail.modify'
-client_secret_file = 'annette/data/client_secret.json'
+client_secret_file = 'annette/.credentials/client_secret.json'
 application_name = 'DCP Pipeline'
-credential_path = 'annette/data/gmail-credentials.json'
+credential_path = 'annette/.credentials/gmail-credentials.json'
 
 flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
 
