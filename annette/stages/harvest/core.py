@@ -1,10 +1,10 @@
 from ._utils import logger
-from .gmail import GmailHarvester
+from .scholaralert import ScholarMailHarvester
 from ._base import BaseHarvester
 
 
 class HarvestCore:
-    harvesters = [GmailHarvester]
+    harvesters = [ScholarMailHarvester]
 
     @classmethod
     def run(cls, session_manager):
