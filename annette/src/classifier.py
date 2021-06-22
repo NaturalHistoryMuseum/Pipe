@@ -32,7 +32,7 @@ class Classifier:
             if l in df3.iloc[:, -1:].values:
                 labels.remove(l)
 
-        df4 = pd.get_dummies(df3, columns=['label_id'], prefix='L')
+        df4 = pd.get_dummies(df3, columns=['label'], prefix='L')
 
         for label in labels:
             df4[f"L_{label}"] = 0

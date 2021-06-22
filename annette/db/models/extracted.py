@@ -20,7 +20,7 @@ class ExtractedCitation(Base):
     sent_date = Column(Date)
     source = Column(String(2))
     id_status = Column(mysql.TINYINT)
-    label_id = Column(String(8))
+    label = Column(mysql.MEDIUMTEXT)
     doi = Column(String(100), default=None)
     snippet_match = Column(Integer)
     highlight_length = Column(Integer)

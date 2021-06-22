@@ -53,7 +53,7 @@ def extracted_citation(**kwargs):
                 sent_date=dt.strptime('2018-08-14', '%Y-%m-%d'),
                 source='GS',
                 id_status=0,
-                label_id='Label_4',
+                label='Label_4',
                 doi=None,
                 snippet_match=0,
                 highlight_length=0,

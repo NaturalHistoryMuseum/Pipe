@@ -25,11 +25,11 @@ class RandomForestClassifier(BaseClassifier):
                                                    'snippet_match'),
                                                ExtractedCitation.highlight_length.label(
                                                    'highlight_length'),
-                                               ExtractedCitation.label_id.label('label_id'))
+                                               ExtractedCitation.label.label('label'))
         q = q.join(ExtractedCitation)
         q = q.outerjoin(NHMPub, Citation.issn == NHMPub.issn).order_by(Citation.doi)
         q = q.group_by(Citation.doi, ExtractedCitation.snippet_match,
-                       ExtractedCitation.highlight_length, ExtractedCitation.label_id)
+                       ExtractedCitation.highlight_length, ExtractedCitation.label)
 
         df = pd.read_sql(q.statement, q.session.bind).drop_duplicates()
 
@@ -39,7 +39,7 @@ class RandomForestClassifier(BaseClassifier):
             if label in df.iloc[:, -1:].values:
                 labels.remove(label)
 
-        expanded_labels = pd.get_dummies(df, columns=['label_id'], prefix='L')
+        expanded_labels = pd.get_dummies(df, columns=['label'], prefix='L')
 
         aggregations = {
             'nhm_sub': 'max',
