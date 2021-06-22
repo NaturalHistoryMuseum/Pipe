@@ -13,8 +13,7 @@ class HarvestCore:
         for harvester_type in cls.harvesters:
             logger.debug(f'Running {harvester_type.__name__}')
             harvester = harvester_type(session_manager)
-            data = harvester.get_data()
-            extracted_citations += harvester.parse_data(data)
+            extracted_citations += harvester.get_data()
         extracted_citations = session_manager.log(extracted_citations)
         logger.debug(f'Finished harvest. {len(extracted_citations)} new citations extracted.')
         return extracted_citations

@@ -12,16 +12,8 @@ class BaseHarvester(object):
     @abstractmethod
     def get_data(self):
         """
-        Load the input data.
+        Load and parse the input data into ExtractedCitation instances.
         :return:
-        """
-        pass
-
-    @abstractmethod
-    def parse_data(self, data):
-        """
-        Parse the input data to retrieve basic citation data.
-        :return: list of ExtractedCitation instances
         """
         pass
 
