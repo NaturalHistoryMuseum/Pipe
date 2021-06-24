@@ -21,3 +21,4 @@ gmail-credentials.json
 local/
 
 /deploy/backend/.cache/
+/deploy/backend/.env
