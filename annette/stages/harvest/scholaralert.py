@@ -281,7 +281,7 @@ class ImapRetriever(Retriever):
             'id': email.uid,
             'harvested_date': date.today(),
             'label': self._get_email_label(email),
-            'received_date': email.date,
+            'received_date': email.date.date(),
             'body': email.html
         }
 
