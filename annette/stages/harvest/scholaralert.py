@@ -35,10 +35,12 @@ class ScholarMailHarvester(BaseHarvester):
         if not prefer_imap:
             try:
                 retriever = GmailRetriever()
+                _utils.logger.debug('Retrieving Google Scholar emails using Gmail client.')
             except:
                 prefer_imap = True
         if prefer_imap:
             retriever = ImapRetriever()
+            _utils.logger.debug('Retrieving Google Scholar emails using IMAP.')
         if retriever is None:
             return []
         emails = retriever.get_emails()
